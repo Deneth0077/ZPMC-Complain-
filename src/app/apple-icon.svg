@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="110" fill="#FFFFFF"/>
+  <circle cx="256" cy="170" r="100" fill="none" stroke="#0F4C81" stroke-width="4.5"/>
+  <circle cx="256" cy="170" r="82" fill="none" stroke="#0F4C81" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <path id="textArc" d="M 130 180 A 130 130 0 0 1 382 180" fill="none"/>
+  <text font-family="'Inter', sans-serif" font-weight="800" font-size="20" fill="#0F4C81" text-anchor="middle">
+    <textPath href="#textArc" startOffset="50%">HAMBANTOTA INTERNATIONAL PORT</textPath>
+  </text>
+  <path d="M242 120 L270 120 L266 210 L246 210 Z" fill="#0F4C81"/>
+  <path d="M236 128 L276 128 L270 142 L242 142 Z" fill="#0B3C68"/>
+  <rect x="248" y="110" width="16" height="12" fill="#0F4C81" rx="2"/>
+  <path d="M185 150 L220 150 M200 150 L195 210 M210 150 L212 210" stroke="#0F4C81" stroke-width="3"/>
+  <path d="M327 150 L292 150 M312 150 L317 210 M302 150 L300 210" stroke="#0F4C81" stroke-width="3"/>
+  <path d="M170 200 Q210 225 256 205 Q300 225 342 200 Q310 235 256 240 Q200 235 170 200 Z" fill="#0F4C81"/>
+  <path d="M220 225 L256 245 L292 225 Z" fill="#FFFFFF"/>
+  <path d="M256 210 L256 240" stroke="#0F4C81" stroke-width="3"/>
+  <text x="256" y="340" font-family="'Inter', -apple-system, sans-serif" font-weight="900" font-size="96" fill="#0B3C68" text-anchor="middle" letter-spacing="-1">ZPMC</text>
+  <g text-anchor="middle">
+    <line x1="110" y1="385" x2="165" y2="385" stroke="#64748B" stroke-width="5" stroke-linecap="round"/>
+    <text x="256" y="394" font-family="'Inter', sans-serif" font-weight="800" font-size="34" fill="#475569" letter-spacing="4">ISSUES</text>
+    <line x1="347" y1="385" x2="402" y2="385" stroke="#64748B" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <path d="M 0 420 Q 200 480 512 410 L 512 512 L 0 512 Z" fill="#0B3C68"/>
+</svg>
