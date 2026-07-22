@@ -14,45 +14,18 @@ import {
   Headphones,
   FileQuestion,
   Image as ImageIcon,
-  X,
-  Send,
   Globe,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
   const { unreadCount } = useNotifications();
   const { t, language, toggleLanguage } = useLanguage();
-
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
-    { sender: "hr", text: "Hello Deneth! How can Hambantota Port HR support you today?" },
-  ]);
-  const [inputMsg, setInputMsg] = useState("");
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMsg.trim()) return;
-
-    setChatMessages((prev) => [...prev, { sender: "user", text: inputMsg }]);
-    const sent = inputMsg;
-    setInputMsg("");
-
-    setTimeout(() => {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          sender: "hr",
-          text: `Thank you for your message regarding "${sent}". An HR Officer will review your inquiry shortly.`,
-        },
-      ]);
-    }, 1000);
-  };
 
   return (
     <div className="flex-1 flex flex-col bg-[#FBF9F9] min-h-full pb-6">
@@ -129,7 +102,7 @@ export default function HomePage() {
 
           <div className="mt-4 relative z-10">
             <button
-              onClick={() => router.push("/complaints/new")}
+              onClick={() => router.push("/complaints/describe")}
               className="py-2.5 px-4 bg-[#38A1F3] hover:bg-sky-400 text-white font-semibold text-xs rounded-full flex items-center gap-2 shadow-sm transition-all touch-active"
             >
               <span>{t.home.startNewComplaint}</span>
@@ -145,18 +118,18 @@ export default function HomePage() {
               {t.home.categoriesTitle}
             </h2>
             <button
-              onClick={() => alert("Showing all available HR issue categories")}
+              onClick={() => router.push("/complaints")}
               className="text-xs font-bold text-[#0060A8] hover:underline"
             >
               {t.home.viewAll}
             </button>
           </div>
 
-          {/* 2x2 Grid Cards matching screenshot */}
+          {/* 2x2 Grid Cards matching screenshots */}
           <div className="grid grid-cols-2 gap-3">
             {/* Card 1: OT Issues */}
             <div
-              onClick={() => router.push("/complaints/new?category=OT_ISSUES")}
+              onClick={() => router.push("/complaints/ot-issues")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
               <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0060A8] flex items-center justify-center mb-2">
@@ -174,7 +147,7 @@ export default function HomePage() {
 
             {/* Card 2: HRIS System Errors */}
             <div
-              onClick={() => router.push("/complaints/new?category=HRIS_ERRORS")}
+              onClick={() => router.push("/complaints/describe?category=HRIS")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
               <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0060A8] flex items-center justify-center mb-2">
@@ -192,7 +165,7 @@ export default function HomePage() {
 
             {/* Card 3: No Pay Issues */}
             <div
-              onClick={() => router.push("/complaints/new?category=NO_PAY_ISSUES")}
+              onClick={() => router.push("/complaints/no-pay")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
               <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-2">
@@ -210,7 +183,7 @@ export default function HomePage() {
 
             {/* Card 4: Other Issues */}
             <div
-              onClick={() => router.push("/complaints/new?category=OTHER_ISSUES")}
+              onClick={() => router.push("/complaints/describe")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
               <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center mb-2">
@@ -248,91 +221,16 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Floating HR Chat Button FAB */}
+      {/* Floating HR Chat Button FAB (Links directly to Dedicated Chat Screen) */}
       <div className="fixed bottom-20 right-5 z-40">
         <button
-          onClick={() => setIsChatOpen(!isChatOpen)}
+          onClick={() => router.push("/chat")}
           aria-label="Floating HR Chat"
           className="w-14 h-14 rounded-full bg-[#0B3B60] hover:bg-[#0F4C81] text-white flex items-center justify-center shadow-floating transition-all transform hover:scale-105 active:scale-95 touch-active"
         >
           <Headphones className="w-7 h-7 stroke-[2]" />
         </button>
       </div>
-
-      {/* Interactive HR Live Support Slide-Up Drawer */}
-      <AnimatePresence>
-        {isChatOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 100 }}
-            className="fixed inset-x-0 bottom-0 top-16 z-50 max-w-[430px] mx-auto bg-white rounded-t-3xl shadow-2xl flex flex-col border-t border-slate-200"
-          >
-            {/* Drawer Header */}
-            <div className="p-4 bg-[#0B3C68] text-white rounded-t-3xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
-                  <Headphones className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold leading-tight">
-                    {t.home.liveSupportTitle}
-                  </h3>
-                  <p className="text-[11px] text-sky-200">{t.home.liveSupportSub}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsChatOpen(false)}
-                className="p-1 rounded-full hover:bg-white/10 text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Chat Body */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
-              {chatMessages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-xs font-medium ${
-                      msg.sender === "user"
-                        ? "bg-[#0B3C68] text-white rounded-br-none"
-                        : "bg-white border border-slate-200 text-slate-800 shadow-sm rounded-bl-none"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Chat Input */}
-            <form
-              onSubmit={handleSendMessage}
-              className="p-3 bg-white border-t border-slate-200 flex items-center gap-2"
-            >
-              <input
-                type="text"
-                value={inputMsg}
-                onChange={(e) => setInputMsg(e.target.value)}
-                placeholder={t.home.typeQuestion}
-                className="flex-1 px-4 py-2.5 bg-slate-100 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0B3C68]"
-              />
-              <button
-                type="submit"
-                className="w-9 h-9 rounded-full bg-[#0B3C68] text-white flex items-center justify-center"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
