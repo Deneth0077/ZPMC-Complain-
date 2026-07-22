@@ -12,51 +12,31 @@ Enterprise Mobile-First Human Resource Complaint & Grievance Management System b
 - **Typography**: Inter Font
 - **Animations**: Framer Motion
 - **Icons**: Lucide Icons & Material Symbols Rounded
-- **Database / ORM**: MongoDB with Mongoose Schemas
+- **Database / ORM**: MongoDB Atlas with Mongoose Schemas
 - **Authentication**: JWT Auth API Routes & Auth Context
+- **Internationalization (i18n)**: English & Sinhala (සිංහල)
 
 ---
 
-## Implemented Screens (Based on UI Design Specifications)
+## Easy Vercel Deployment Guide
 
-1. **Splash Screen** (`/splash`)
-   - Port Emblem Badge, "Hambantota International Port", "HR Complaint Management"
-   - Animated progress loader (`INITIALIZING SYSTEM`), version string `1.0.0`, secure gateway tag.
+### Option 1: Deploy via Vercel Dashboard (Recommended)
 
-2. **Welcome Screen** (`/welcome`)
-   - Header with `HIP HR`, vector meeting & port backdrop illustration.
-   - Action buttons: `→ Login` and `+ Register`.
-   - Confidential note (`✓ Encrypted & Confidential System`) and footer attribution.
+1. Go to [https://vercel.com/new](https://vercel.com/new)
+2. Import your GitHub repository: **`Deneth0077/ZPMC-Complain-`**
+3. Under **Environment Variables**, add the following 3 variables:
 
-3. **Employee Login Screen** (`/login`)
-   - Anchor badge header (`Hambantota Port HUMAN RESOURCES`).
-   - Inputs for **Employee Number** (`HIP-0000`) and **4-Digit PIN** (`••••`).
-   - Remember Me toggle, Forgot PIN link, Register Now callout.
-   - SSL encrypted environment badge and support footer links.
+| Variable Key | Recommended Value |
+|---|---|
+| `MONGODB_URI` | `mongodb+srv://movies:hrissusdb@cluster0.wh95jya.mongodb.net/hambantota_port_hr?retryWrites=true&w=majority&appName=Cluster0` |
+| `JWT_SECRET` | `hambantota_port_hr_jwt_secret_2026_key` |
+| `NEXT_PUBLIC_APP_URL` | `https://your-app-name.vercel.app` |
 
-4. **Home Page Screen** (`/home`)
-   - Greeting header with employee name (`Hello Deneth`), employee ID (`HMPT-1234`), notification bell badge, and avatar.
-   - Hero banner card: `Complain Your Issue to HR` with sky blue `Start New Complaint ⊕` button.
-   - 2x2 Categories Grid:
-     - **OT Issues** (*Hours & Overtime*)
-     - **HRIS System Errors** (*Portal Access*)
-     - **No Pay Issues** (*Salary Deductions*)
-     - **Other Issues** (*General Inquiry*)
-   - Recent Complaints empty state card.
-   - Floating Action Button (FAB) launching the interactive HR Live Support slide-up chat drawer.
-   - Fixed Bottom Navigation (Home, My Complaints, Alerts, Profile).
-
-5. **Notifications / Alerts Screen** (`/alerts`)
-   - Header with back arrow, title `Hambantota Port HR`, user avatar.
-   - `Notifications` section title with `MARK ALL AS READ` action.
-   - Grouped notification feed matching the exact UI design:
-     - `! HR Requested More Information`: Red icon, COMP-4829 (*Medical Certificate Missing*).
-     - `↻ Complaint Status Changed`: COMP-4712 (`UNDER REVIEW` pill badge), COMP-4501 (`RESOLVED` peach badge).
-     - `💬 New Complaint Updates`: COMP-4900 (*New Comment from HR*), COMP-4882 (*Document Attached*).
+4. Click **Deploy**! Vercel will build and publish your project in under 1 minute.
 
 ---
 
-## How to Run Locally
+## Local Development
 
 ```bash
 # 1. Install dependencies
