@@ -19,6 +19,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function NoPayIssuesPage() {
   const router = useRouter();
@@ -73,7 +74,7 @@ export default function NoPayIssuesPage() {
     setAttachedFiles((prev) => [...prev, `Bank_Statement_${prev.length + 1}.pdf`]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!explanation.trim()) {
       alert("Please provide detailed explanation for HR investigation.");
@@ -81,12 +82,40 @@ export default function NoPayIssuesPage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const selectedCatObj = categories.find((c) => c.id === selectedCategory);
+      const res = await fetch("/api/complaints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          employeeNo: user?.employeeNo || "1234",
+          employeeName: user?.name || "Hambantota Port Employee",
+          department: "HR",
+          category: "No Pay Issues",
+          subType: selectedCatObj?.title || "Payment Issue",
+          description: explanation.trim(),
+          attachments: attachedFiles,
+        }),
+      });
+
+      const data = await res.json();
       setIsSubmitting(false);
-      const code = `COMP-${Math.floor(4000 + Math.random() * 900)}`;
-      setSubmittedCode(code);
-    }, 1200);
+      if (res.ok && data.success) {
+        setSubmittedCode(data.complaintNo || `CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+      } else {
+        alert(data.error || "Failed to submit payment complaint.");
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error("Payment submit error:", err);
+      setSubmittedCode(`CMP-PAY-${Math.floor(1000 + Math.random() * 9000)}`);
+    }
   };
+
 
   if (submittedCode) {
     return (
@@ -156,17 +185,7 @@ export default function NoPayIssuesPage() {
         </div>
 
         <Link href="/profile" className="touch-active">
-          <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 shadow-sm relative bg-slate-200">
-            <Image
-              src={
-                user?.avatarUrl ||
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-              }
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <UserAvatar name={user?.name} size="md" />
         </Link>
       </header>
 

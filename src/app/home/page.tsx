@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function HomePage() {
   const router = useRouter();
@@ -63,17 +64,7 @@ export default function HomePage() {
 
           {/* User Profile Avatar */}
           <Link href="/profile" className="touch-active">
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm relative bg-slate-200">
-              <Image
-                src={
-                  user?.avatarUrl ||
-                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-                }
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            </div>
+            <UserAvatar name={user?.name} size="md" />
           </Link>
         </div>
       </header>
@@ -100,7 +91,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-4 relative z-10">
+          <div className="mt-4 relative z-10 flex items-center gap-2">
             <button
               onClick={() => router.push("/complaints/describe")}
               className="py-2.5 px-4 bg-[#38A1F3] hover:bg-sky-400 text-white font-semibold text-xs rounded-full flex items-center gap-2 shadow-sm transition-all touch-active"
@@ -108,8 +99,18 @@ export default function HomePage() {
               <span>{t.home.startNewComplaint}</span>
               <PlusCircle className="w-4 h-4 stroke-[2.2]" />
             </button>
+
+            {(user?.role === "hr_officer" || user?.role === "hr_manager" || user?.employeeNo?.startsWith("HR")) && (
+              <button
+                onClick={() => router.push("/hr/dashboard")}
+                className="py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-white font-bold text-xs rounded-full flex items-center gap-1.5 shadow-sm transition-all touch-active"
+              >
+                <span>HR Admin Portal</span>
+              </button>
+            )}
           </div>
         </motion.div>
+
 
         {/* Categories Section */}
         <section className="space-y-3">

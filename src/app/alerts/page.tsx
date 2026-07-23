@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function AlertsPage() {
   const router = useRouter();
@@ -24,9 +25,18 @@ export default function AlertsPage() {
   const { notifications, markAllAsRead, markAsRead } = useNotifications();
   const { t, language, toggleLanguage } = useLanguage();
 
+  // Auto-mark notifications as viewed/read on entering Notification Center, keeping them saved in history
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      markAllAsRead();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
+
   const hrRequested = notifications.filter((n) => n.group === "hr_requested_info");
   const statusChanged = notifications.filter((n) => n.group === "status_changed");
   const newUpdates = notifications.filter((n) => n.group === "new_updates");
+
 
   return (
     <div className="flex-1 flex flex-col bg-[#FBF9F9] min-h-full pb-8">
@@ -55,17 +65,7 @@ export default function AlertsPage() {
           </button>
 
           <Link href="/profile" className="touch-active">
-            <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 shadow-sm relative bg-slate-200">
-              <Image
-                src={
-                  user?.avatarUrl ||
-                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-                }
-                alt="Profile"
-                fill
-                className="object-cover"
-              />
-            </div>
+            <UserAvatar name={user?.name} size="md" />
           </Link>
         </div>
       </header>

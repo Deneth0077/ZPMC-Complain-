@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Search, Filter, Plus } from "lucide-react";
+import { ArrowLeft, Search, Filter, Plus, RefreshCw } from "lucide-react";
 import { Complaint } from "@/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const mockUserComplaints: Complaint[] = [
   {
@@ -18,7 +19,7 @@ const mockUserComplaints: Complaint[] = [
     status: "PENDING",
     createdAt: "2026-07-22",
     updatedAt: "2h ago",
-    employeeNo: "HMPT-1234",
+    employeeNo: "1234",
   },
   {
     id: "c-2",
@@ -30,7 +31,7 @@ const mockUserComplaints: Complaint[] = [
     status: "UNDER REVIEW",
     createdAt: "2026-07-20",
     updatedAt: "5h ago",
-    employeeNo: "HMPT-1234",
+    employeeNo: "1234",
     assignedOfficer: "Senior HR Officer Silva",
   },
   {
@@ -43,20 +44,64 @@ const mockUserComplaints: Complaint[] = [
     status: "RESOLVED",
     createdAt: "2026-07-15",
     updatedAt: "Yesterday",
-    employeeNo: "HMPT-1234",
+    employeeNo: "1234",
   },
 ];
 
 export default function MyComplaintsPage() {
   const router = useRouter();
-  const { t, language } = useLanguage();
+  const { user } = useAuth();
+  const { t } = useLanguage();
+  const [complaints, setComplaints] = useState<Complaint[]>(mockUserComplaints);
+  const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
 
-  const filtered = mockUserComplaints.filter((c) => {
+  const fetchComplaints = async () => {
+    setLoading(true);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const res = await fetch(`/api/complaints?employeeNo=${user?.employeeNo || "1234"}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.complaints?.length > 0) {
+        const formatted = data.complaints.map((c: any) => ({
+          id: c.id || c._id,
+          complaintNo: c.complaintNo,
+          category: c.category,
+          categoryTitle: c.subType || c.category,
+          subType: c.subType,
+          description: c.description,
+          status: c.status,
+          createdAt: new Date(c.createdAt).toLocaleDateString(),
+          updatedAt: new Date(c.updatedAt || c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          employeeNo: c.employeeNo,
+        }));
+        setComplaints(formatted);
+      }
+    } catch (err) {
+      console.error("Fetch complaints error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+  }, [user]);
+
+  const activeCount = complaints.filter((c) => c.status === "UNDER REVIEW").length;
+  const resolvedCount = complaints.filter((c) => c.status === "RESOLVED").length;
+  const pendingCount = complaints.filter((c) => c.status === "PENDING").length;
+
+  const filtered = complaints.filter((c) => {
     const matchesSearch =
       c.complaintNo.toLowerCase().includes(search.toLowerCase()) ||
-      c.categoryTitle.toLowerCase().includes(search.toLowerCase());
+      (c.categoryTitle || c.category || "").toLowerCase().includes(search.toLowerCase()) ||
+      c.description.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filterStatus === "ALL" || c.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
@@ -73,22 +118,29 @@ export default function MyComplaintsPage() {
           </button>
           <h1 className="text-base font-bold text-slate-900">{t.myComplaints.headerTitle}</h1>
         </div>
+
+        <button
+          onClick={fetchComplaints}
+          className="p-2 rounded-full hover:bg-slate-100 text-slate-600"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-[#0B3C68]" : ""}`} />
+        </button>
       </header>
 
       <main className="flex-1 px-5 pt-4 space-y-4">
         {/* Statistics Bar */}
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-sm">
-            <div className="text-xs text-slate-400 font-bold uppercase">{t.myComplaints.statActive}</div>
-            <div className="text-lg font-bold text-[#0B3C68] mt-0.5">2</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase">{t.myComplaints.statActive}</div>
+            <div className="text-lg font-bold text-[#0B3C68] mt-0.5">{activeCount}</div>
           </div>
           <div className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-sm">
-            <div className="text-xs text-slate-400 font-bold uppercase">{t.myComplaints.statResolved}</div>
-            <div className="text-lg font-bold text-emerald-600 mt-0.5">1</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase">{t.myComplaints.statResolved}</div>
+            <div className="text-lg font-bold text-emerald-600 mt-0.5">{resolvedCount}</div>
           </div>
           <div className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-sm">
-            <div className="text-xs text-slate-400 font-bold uppercase">{t.myComplaints.statPending}</div>
-            <div className="text-lg font-bold text-orange-600 mt-0.5">1</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase">{t.myComplaints.statPending}</div>
+            <div className="text-lg font-bold text-orange-600 mt-0.5">{pendingCount}</div>
           </div>
         </div>
 
@@ -106,7 +158,7 @@ export default function MyComplaintsPage() {
           </div>
           <button
             onClick={() => {
-              const next = filterStatus === "ALL" ? "UNDER REVIEW" : filterStatus === "UNDER REVIEW" ? "RESOLVED" : "ALL";
+              const next = filterStatus === "ALL" ? "UNDER REVIEW" : filterStatus === "UNDER REVIEW" ? "RESOLVED" : filterStatus === "RESOLVED" ? "PENDING" : "ALL";
               setFilterStatus(next);
             }}
             className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 text-xs font-semibold flex items-center gap-1"
@@ -121,7 +173,7 @@ export default function MyComplaintsPage() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              onClick={() => alert(`Viewing full details for ${item.complaintNo}`)}
+              onClick={() => alert(`Complaint Reference: ${item.complaintNo}\nStatus: ${item.status}\n\nDescription: ${item.description}`)}
               className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm hover:shadow-md transition-all cursor-pointer space-y-2"
             >
               <div className="flex items-center justify-between">
@@ -131,7 +183,7 @@ export default function MyComplaintsPage() {
                 <span
                   className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                     item.status === "RESOLVED"
-                      ? "bg-[#FFEDD5] text-[#9A3412]"
+                      ? "bg-emerald-100 text-emerald-800"
                       : item.status === "UNDER REVIEW"
                       ? "bg-sky-100 text-[#0284C7]"
                       : "bg-orange-100 text-orange-700"
@@ -142,7 +194,7 @@ export default function MyComplaintsPage() {
               </div>
 
               <h3 className="text-sm font-bold text-slate-900 leading-snug">
-                {item.categoryTitle}
+                {item.categoryTitle || item.category}
               </h3>
               <p className="text-xs text-slate-500 line-clamp-2">
                 {item.description}
@@ -160,10 +212,11 @@ export default function MyComplaintsPage() {
       {/* Floating Add FAB */}
       <Link
         href="/complaints/new"
-        className="fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-[#0B3C68] text-white flex items-center justify-center shadow-lg"
+        className="fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-[#0B3C68] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
       >
         <Plus className="w-7 h-7" />
       </Link>
     </div>
   );
 }
+

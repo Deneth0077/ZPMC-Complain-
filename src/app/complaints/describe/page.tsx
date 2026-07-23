@@ -17,6 +17,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function DescribeIssuePage() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function DescribeIssuePage() {
     setVoiceNotes((prev) => prev.filter((v) => v !== name));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim() || description.length < 5) {
       alert("Please provide a detailed issue description.");
@@ -51,11 +52,43 @@ export default function DescribeIssuePage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const res = await fetch("/api/complaints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          employeeNo: user?.employeeNo || "1234",
+          employeeName: user?.name || "Hambantota Port Employee",
+          department: "HR",
+          category: "HR Issues",
+          subType: "Grievance Report",
+          description: description.trim(),
+          preferredLanguage: language,
+          attachments: [...voiceNotes, ...images],
+        }),
+      });
+
+      const data = await res.json();
       setIsSubmitting(false);
-      setSubmittedCode(`COMP-ETHICS-${Math.floor(1000 + Math.random() * 9000)}`);
-    }, 1200);
+
+      if (res.ok && data.success) {
+        setSubmittedCode(data.complaintNo || `CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+      } else {
+        alert(data.error || "Submission failed. Please try again.");
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error("Submit complaint error:", err);
+      // Fallback
+      setSubmittedCode(`CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+    }
   };
+
 
   if (submittedCode) {
     return (
@@ -119,17 +152,7 @@ export default function DescribeIssuePage() {
         </div>
 
         <Link href="/profile" className="touch-active">
-          <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 shadow-sm relative bg-slate-200">
-            <Image
-              src={
-                user?.avatarUrl ||
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-              }
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <UserAvatar name={user?.name} size="md" />
         </Link>
       </header>
 

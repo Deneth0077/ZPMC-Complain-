@@ -5,8 +5,10 @@ export interface IEmployee extends Document {
   pin: string;
   name: string;
   phone: string;
-  department: string;
-  designation: string;
+  workingSite?: string;
+  nic?: string;
+  department?: string;
+  designation?: string;
   avatarUrl?: string;
   role: string;
   createdAt: Date;
@@ -17,9 +19,11 @@ const EmployeeSchema: Schema = new Schema({
   pin: { type: String, required: true },
   name: { type: String, required: true },
   phone: { type: String, required: true },
-  department: { type: String, required: true },
-  designation: { type: String, required: true },
-  avatarUrl: { type: String },
+  workingSite: { type: String, required: true, default: 'HIPG' },
+  nic: { type: String, required: false },
+  department: { type: String, default: 'Port Operations' },
+  designation: { type: String, default: 'Employee' },
+  avatarUrl: { type: String, default: '' },
   role: { type: String, default: 'employee' },
   createdAt: { type: Date, default: Date.now },
 });

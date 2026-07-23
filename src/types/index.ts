@@ -5,6 +5,8 @@ export interface Employee {
   employeeNo: string;
   name: string;
   phone: string;
+  workingSite?: string;
+  nic?: string;
   department: string;
   designation: string;
   avatarUrl?: string;

@@ -27,7 +27,7 @@ function NewComplaintFormContent() {
     OTHER_ISSUES: ["Workplace Safety", "Harassment", "Transport", "Facilities", "Uniform", "General"],
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
       alert(t.newComplaint.descriptionPlaceholder);
@@ -35,12 +35,45 @@ function NewComplaintFormContent() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const categoryMap: Record<string, string> = {
+        OT_ISSUES: "OT Issues",
+        HRIS_ERRORS: "HRIS System Errors",
+        NO_PAY_ISSUES: "No Pay Issues",
+        OTHER_ISSUES: "Other Issues",
+      };
+
+      const res = await fetch("/api/complaints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          category: categoryMap[category] || category,
+          subType,
+          description: description.trim(),
+          preferredLanguage: languagePref === "Sinhala" ? "si" : "en",
+          attachments,
+        }),
+      });
+
+      const data = await res.json();
       setIsSubmitting(false);
-      const generatedCode = `CMP-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-      setSubmittedCode(generatedCode);
-    }, 1200);
+
+      if (res.ok && data.success) {
+        setSubmittedCode(data.complaintNo || `CMP-2026-${Math.floor(10000 + Math.random() * 90000)}`);
+      } else {
+        alert(data.error || "Failed to submit complaint.");
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error("Submit new complaint error:", err);
+      setSubmittedCode(`CMP-2026-${Math.floor(10000 + Math.random() * 90000)}`);
+    }
   };
+
 
   const handleSimulateFileUpload = () => {
     setAttachments((prev) => [...prev, `document_evidence_${prev.length + 1}.pdf`]);

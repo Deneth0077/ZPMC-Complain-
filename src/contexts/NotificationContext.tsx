@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+
 import { NotificationItem } from "@/types";
 
 interface NotificationContextType {
@@ -72,16 +73,71 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  const fetchLiveNotifications = async () => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const res = await fetch("/api/notifications", {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.notifications?.length > 0) {
+        const formatted = data.notifications.map((n: any) => ({
+          id: n._id || n.id,
+          complaintId: n.complaintId || "CMP-2026",
+          group: n.group || "new_updates",
+          title: n.title,
+          description: n.description,
+          timeAgo: new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          dateStr: new Date(n.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' }),
+          isRead: !!n.isRead,
+          statusBadge: n.statusBadge,
+          badgeType: n.statusBadge === "RESOLVED" ? "status_change" : "comment",
+        }));
+        setNotifications(formatted);
+      }
+    } catch (err) {
+      console.error("Fetch notifications error:", err);
+    }
   };
 
-  const markAsRead = (id: string) => {
+  useEffect(() => {
+    fetchLiveNotifications();
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const markAllAsRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (err) {
+      console.error("Mark all read error:", err);
+    }
+  };
+
+  const markAsRead = async (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (err) {
+      console.error("Mark single read error:", err);
+    }
   };
 
   return (
@@ -97,6 +153,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     </NotificationContext.Provider>
   );
 };
+
 
 export const useNotifications = () => {
   const context = useContext(NotificationContext);

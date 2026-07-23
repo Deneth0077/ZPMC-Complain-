@@ -21,6 +21,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function OtIssuesPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function OtIssuesPage() {
     setAttachments((prev) => [...prev, `${type}_Attachment_${prev.length + 1}`]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!details.trim()) {
       alert("Please provide issue details.");
@@ -58,11 +59,39 @@ export default function OtIssuesPage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
+      const res = await fetch("/api/complaints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          employeeNo: user?.employeeNo || "1234",
+          employeeName: user?.name || "Hambantota Port Employee",
+          department: "HR",
+          category: "OT Issues",
+          subType: otOptions.find((o) => o.id === selectedType)?.label || "Overtime Issue",
+          description: details.trim(),
+          attachments,
+        }),
+      });
+
+      const data = await res.json();
       setIsSubmitting(false);
+      if (res.ok && data.success) {
+        setSubmittedCode(data.complaintNo || `CMP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+      } else {
+        alert(data.error || "Failed to submit OT complaint.");
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      console.error("OT submit error:", err);
       setSubmittedCode(`CMP-OT-${Math.floor(1000 + Math.random() * 9000)}`);
-    }, 1200);
+    }
   };
+
 
   if (submittedCode) {
     return (
@@ -130,17 +159,7 @@ export default function OtIssuesPage() {
         </div>
 
         <Link href="/profile" className="touch-active">
-          <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 shadow-sm relative bg-slate-200">
-            <Image
-              src={
-                user?.avatarUrl ||
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-              }
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <UserAvatar name={user?.name} size="md" />
         </Link>
       </header>
 

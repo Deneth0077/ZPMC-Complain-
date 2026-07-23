@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -44,17 +45,7 @@ export default function ProfilePage() {
       <main className="flex-1 px-5 pt-5 space-y-5">
         {/* User Badge Card */}
         <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#0B3C68] relative bg-slate-200 shrink-0">
-            <Image
-              src={
-                user?.avatarUrl ||
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
-              }
-              alt="Avatar"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <UserAvatar name={user?.name} size="lg" />
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-bold text-slate-900 truncate">
               {user?.name || "Deneth"}

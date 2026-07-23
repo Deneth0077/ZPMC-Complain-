@@ -1,67 +1,55 @@
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 import { connectToDatabase } from "@/lib/db";
 import Notification from "@/models/Notification";
 
-const defaultNotifications = [
-  {
-    employeeNo: "HMPT-1234",
-    complaintId: "COMP-4829",
-    group: "hr_requested_info",
-    title: "Medical Certificate Missing",
-    description: "HR requires a scanned copy of your official medical certificate to process...",
-    isRead: false,
-    badgeType: "red_alert",
-  },
-  {
-    employeeNo: "HMPT-1234",
-    complaintId: "COMP-4712",
-    group: "status_changed",
-    title: "Moved to Investigation",
-    description: 'Your grievance regarding "Safety Equipment Delay" has been assigned to a senior officer.',
-    isRead: true,
-    statusBadge: "UNDER REVIEW",
-    badgeType: "status_change",
-  },
-  {
-    employeeNo: "HMPT-1234",
-    complaintId: "COMP-4501",
-    group: "status_changed",
-    title: "Resolution Finalized",
-    description: 'The "Overtime Discrepancy" complaint has been resolved. Check your dashboard for the final report.',
-    isRead: false,
-    statusBadge: "RESOLVED",
-    badgeType: "status_change",
-  },
-  {
-    employeeNo: "HMPT-1234",
-    complaintId: "COMP-4900",
-    group: "new_updates",
-    title: "New Comment from HR",
-    description: '"We have contacted the department head regarding the workstation ergonomics request..."',
-    isRead: true,
-    badgeType: "comment",
-  },
-  {
-    employeeNo: "HMPT-1234",
-    complaintId: "COMP-4882",
-    group: "new_updates",
-    title: "Document Attached",
-    description: "An 'Official Policy Reference' has been attached to your pending complaint.",
-    isRead: true,
-    badgeType: "attachment",
-  },
-];
+const JWT_SECRET = process.env.JWT_SECRET || "hambantota_port_hr_jwt_secret_2026_key";
 
-export async function GET() {
+interface UserJwtPayload {
+  id: string;
+  employeeNo: string;
+  role: string;
+}
+
+function getUserFromAuthHeader(req: Request): UserJwtPayload | null {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return null;
+    }
+    const token = authHeader.split(" ")[1];
+    return jwt.verify(token, JWT_SECRET) as UserJwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+export async function GET(req: Request) {
   try {
     await connectToDatabase();
+    const user = getUserFromAuthHeader(req);
 
-    let notifications = await Notification.find({}).sort({ createdAt: -1 });
+    let query: Record<string, unknown> = {};
 
-    if (notifications.length === 0) {
-      await Notification.insertMany(defaultNotifications);
-      notifications = await Notification.find({}).sort({ createdAt: -1 });
+    if (user?.role === "hr_officer" || user?.role === "hr_manager") {
+      query = {
+        $or: [
+          { recipientRole: "all_hr" },
+          { recipientRole: user.role },
+          { employeeNo: user.employeeNo },
+        ],
+      };
+    } else if (user?.employeeNo) {
+      query = {
+        $or: [
+          { employeeNo: user.employeeNo },
+          { employeeNo: "1234" },
+          { recipientRole: "employee" },
+        ],
+      };
     }
+
+    let notifications = await Notification.find(query).sort({ createdAt: -1 });
 
     return NextResponse.json({
       success: true,
@@ -77,14 +65,23 @@ export async function GET() {
   }
 }
 
-export async function PATCH() {
+export async function PATCH(req: Request) {
   try {
     await connectToDatabase();
-    await Notification.updateMany({}, { isRead: true });
+    const user = getUserFromAuthHeader(req);
+
+    let query: Record<string, unknown> = {};
+    if (user?.role === "hr_officer" || user?.role === "hr_manager") {
+      query = { recipientRole: { $in: ["all_hr", user.role] } };
+    } else if (user?.employeeNo) {
+      query = { employeeNo: user.employeeNo };
+    }
+
+    await Notification.updateMany(query, { isRead: true });
 
     return NextResponse.json({
       success: true,
-      message: "All notifications marked as read in MongoDB Atlas",
+      message: "Notifications marked as read",
     });
   } catch (error) {
     return NextResponse.json(
@@ -93,3 +90,4 @@ export async function PATCH() {
     );
   }
 }
+

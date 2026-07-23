@@ -13,8 +13,8 @@ export default function LoginPage() {
   const { login, isLoading } = useAuth();
   const { t, toggleLanguage } = useLanguage();
 
-  const [employeeNo, setEmployeeNo] = useState("HMPT-1234");
-  const [pin, setPin] = useState("1234");
+  const [employeeNo, setEmployeeNo] = useState("");
+  const [pin, setPin] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -32,12 +32,14 @@ export default function LoginPage() {
     }
 
     try {
-      const success = await login(employeeNo, pin, rememberMe);
-      if (success) {
+      const res = await login(employeeNo, pin, rememberMe);
+      if (res.success) {
         router.push("/home");
+      } else {
+        setErrorMsg(res.error || "Invalid credentials. Please check your Employee No & PIN.");
       }
     } catch {
-      setErrorMsg("Invalid credentials. Please check your Employee No & PIN.");
+      setErrorMsg("Connection error. Please try again.");
     }
   };
 
@@ -74,6 +76,45 @@ export default function LoginPage() {
           <p className="text-xs font-normal text-slate-500 mt-1">
             {t.login.cardSub}
           </p>
+
+          {/* Quick Portal Role Shortcuts */}
+          <div className="mt-3 p-2 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
+              Quick Portal Login Accounts
+            </span>
+            <div className="grid grid-cols-3 gap-1 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmployeeNo("1234");
+                  setPin("1234");
+                }}
+                className="py-1.5 px-2 bg-white hover:bg-slate-100 text-[#0B3C68] rounded-xl border border-slate-200 text-center transition-colors"
+              >
+                Employee (1234)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmployeeNo("HR-001");
+                  setPin("1234");
+                }}
+                className="py-1.5 px-2 bg-white hover:bg-sky-50 text-sky-700 rounded-xl border border-sky-200 text-center transition-colors"
+              >
+                HR Officer (HR-001)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmployeeNo("HRM-001");
+                  setPin("1234");
+                }}
+                className="py-1.5 px-2 bg-white hover:bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-center transition-colors"
+              >
+                HR Manager (HRM-001)
+              </button>
+            </div>
+          </div>
         </div>
 
         {errorMsg && (
@@ -81,6 +122,7 @@ export default function LoginPage() {
             {errorMsg}
           </div>
         )}
+
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Employee Number Input */}
@@ -109,12 +151,8 @@ export default function LoginPage() {
                 {t.login.pinLabel}
               </label>
               <Link
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Forgot PIN service: Contact HR Desk at ext 4400 or visit HR Office.");
-                }}
-                className="text-xs font-semibold text-[#0060A8] hover:underline"
+                href="/forgot-pin"
+                className="text-xs font-semibold text-[#0060A8] hover:underline cursor-pointer"
               >
                 {t.login.forgotPin}
               </Link>
@@ -155,7 +193,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-12 mt-2 bg-[#0B3C68] hover:bg-[#0F4C81] text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-900/15 transition-all touch-active disabled:opacity-70"
+            className="w-full h-12 mt-2 bg-[#0B3C68] hover:bg-[#0F4C81] text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-900/15 transition-all touch-active disabled:opacity-70 cursor-pointer"
           >
             {isLoading ? (
               <span className="text-sm">{t.login.authenticating}</span>
@@ -173,12 +211,12 @@ export default function LoginPage() {
         {/* Register link callout */}
         <div className="text-center text-xs text-slate-600 font-medium">
           {t.login.newStaff}{" "}
-          <button
-            onClick={() => alert("Registration system checking port database for Employee No.")}
+          <Link
+            href="/register"
             className="font-bold text-[#0060A8] hover:underline"
           >
             {t.login.registerNow}
-          </button>
+          </Link>
         </div>
       </motion.div>
 

@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface INotification extends Document {
-  employeeNo: string;
-  complaintId: string;
+  employeeNo?: string;
+  recipientRole?: 'employee' | 'hr_officer' | 'hr_manager' | 'all_hr';
+  complaintId?: string;
   group: 'hr_requested_info' | 'status_changed' | 'new_updates';
   title: string;
   description: string;
@@ -12,12 +13,14 @@ export interface INotification extends Document {
 }
 
 const NotificationSchema: Schema = new Schema({
-  employeeNo: { type: String, required: true },
-  complaintId: { type: String, required: true },
+  employeeNo: { type: String },
+  recipientRole: { type: String, enum: ['employee', 'hr_officer', 'hr_manager', 'all_hr'], default: 'employee' },
+  complaintId: { type: String },
   group: {
     type: String,
     enum: ['hr_requested_info', 'status_changed', 'new_updates'],
     required: true,
+    default: 'new_updates',
   },
   title: { type: String, required: true },
   description: { type: String, required: true },
@@ -27,3 +30,4 @@ const NotificationSchema: Schema = new Schema({
 });
 
 export default mongoose.models.Notification || mongoose.model<INotification>('Notification', NotificationSchema);
+
