@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
@@ -51,9 +51,10 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="application-name" content="ZPMC Issues" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <MobileShell>{children}</MobileShell>
       </body>
     </html>
+
   );
 }
