@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Anchor, Contact, Lock, ArrowRight, ShieldCheck, Globe } from "lucide-react";
+import { Contact, Lock, ArrowRight, ShieldCheck, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
@@ -50,9 +51,16 @@ export default function LoginPage() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-14 h-14 rounded-2xl bg-[#0B3C68] flex items-center justify-center text-white shadow-md shadow-blue-950/20 mb-3"
+          className="w-16 h-16 rounded-2xl overflow-hidden shadow-md shadow-blue-950/20 mb-3 bg-[#0B3C68]"
         >
-          <Anchor className="w-8 h-8 text-white stroke-[2]" />
+          <Image
+            src="/zpmc-hr-icon.png"
+            alt="ZPMC LANKA HR App Icon"
+            width={64}
+            height={64}
+            priority
+            className="w-full h-full object-cover rounded-2xl"
+          />
         </motion.div>
         <h1 className="text-xl font-bold text-[#0B3C68] tracking-tight">
           {t.login.headerTitle}

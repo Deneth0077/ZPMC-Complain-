@@ -2,8 +2,9 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShieldCheck, Anchor } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SplashScreen() {
@@ -20,26 +21,22 @@ export default function SplashScreen() {
   return (
     <div className="flex-1 flex flex-col justify-between items-center px-6 py-12 bg-[#FBF9F9] min-h-full">
       <div className="w-full flex-1 flex flex-col items-center justify-center -mt-8">
-        {/* Animated Port Logo Container */}
+        {/* Animated ZPMC LANKA HR Logo Container */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative mb-8"
         >
-          <div className="w-28 h-28 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center justify-center p-3 text-center">
-            {/* Maritime / Port Emblem Badge */}
-            <div className="w-14 h-14 rounded-full border-2 border-[#0F4C81] flex items-center justify-center p-1 mb-1">
-              <div className="w-full h-full rounded-full border border-sky-400/40 flex items-center justify-center bg-slate-50">
-                <Anchor className="w-7 h-7 text-[#0F4C81]" />
-              </div>
-            </div>
-            <span className="text-[7px] font-bold tracking-widest text-[#0F4C81] uppercase leading-tight">
-              GLOBAL PORT AUTHORITY
-            </span>
-            <span className="text-[5px] font-medium tracking-tighter text-slate-400 uppercase">
-              INTERNATIONAL SHIPPING & LOGISTICS
-            </span>
+          <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-[0_12px_35px_rgba(15,76,129,0.2)] ring-4 ring-white/80 flex items-center justify-center bg-[#0F4C81]">
+            <Image
+              src="/zpmc-hr-icon.png"
+              alt="ZPMC LANKA HR App Icon"
+              width={128}
+              height={128}
+              priority
+              className="w-full h-full object-cover rounded-3xl"
+            />
           </div>
         </motion.div>
 

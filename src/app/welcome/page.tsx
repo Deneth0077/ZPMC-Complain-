@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { LogIn, UserPlus, ShieldCheck, Globe } from "lucide-react";
 import { motion } from "framer-motion";
@@ -15,9 +16,19 @@ export default function WelcomePage() {
     <div className="flex-1 flex flex-col justify-between bg-[#FBF9F9] min-h-full pb-6">
       {/* Top Bar Header */}
       <header className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md">
-        <h1 className="text-xl font-bold tracking-tight text-[#0B3C68]">
-          {t.welcome.header}
-        </h1>
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/zpmc-hr-icon.png"
+            alt="ZPMC LANKA HR Logo"
+            width={34}
+            height={34}
+            priority
+            className="w-8.5 h-8.5 rounded-xl shadow-sm border border-slate-100"
+          />
+          <h1 className="text-xl font-bold tracking-tight text-[#0B3C68]">
+            {t.welcome.header}
+          </h1>
+        </div>
 
         {/* 3-Language Switcher Button */}
         <button

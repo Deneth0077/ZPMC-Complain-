@@ -35,13 +35,23 @@ export default function HomePage() {
     <div className="flex-1 flex flex-col bg-[#FBF9F9] min-h-full pb-6">
       {/* Top Header */}
       <header className="px-5 py-4 flex items-center justify-between bg-white border-b border-slate-100 sticky top-0 z-30">
-        <div className="flex flex-col">
-          <h1 className="text-base font-bold text-slate-800 leading-tight">
-            {t.home.greeting} {user?.name || "Deneth"}
-          </h1>
-          <p className="text-xs font-semibold text-slate-500">
-            {user?.employeeNo || "HMPT-1234"}
-          </p>
+        <div className="flex items-center gap-2.5">
+          <Image
+            src="/zpmc-hr-icon.png"
+            alt="ZPMC LANKA HR Logo"
+            width={36}
+            height={36}
+            priority
+            className="w-9 h-9 rounded-xl shadow-sm border border-slate-100"
+          />
+          <div className="flex flex-col">
+            <h1 className="text-base font-bold text-slate-800 leading-tight">
+              {t.home.greeting} {user?.name || "Deneth"}
+            </h1>
+            <p className="text-xs font-semibold text-slate-500">
+              {user?.employeeNo || "HMPT-1234"}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
