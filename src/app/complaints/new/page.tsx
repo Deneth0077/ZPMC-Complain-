@@ -21,10 +21,13 @@ function NewComplaintFormContent() {
   const [submittedCode, setSubmittedCode] = useState<string | null>(null);
 
   const subTypeOptions: Record<string, string[]> = {
+    SALARY_ISSUES: ["Salary Not Received", "Incorrect Salary Amount", "Allowance Missing", "Wrong Deduction", "Bonus Missing"],
+    HRIS_ERRORS: ["Portal Access Error", "Login Discrepancy", "System Error", "Data Display Bug"],
+    FINGERPRINT_ISSUES: ["Fingerprint Scan Failed", "Punch Record Missing", "Device Offline", "Time Log Error"],
+    EMPLOYEE_NEEDS: ["Workstation & Equipment", "Uniform / PPE Request", "Transport & Meal Issue", "Welfare Request"],
+    OTHER_ISSUES: ["Workplace Safety", "Harassment", "General Inquiry", "Other"],
     OT_ISSUES: ["Incorrect OT", "OT Missing", "OT Not Approved", "Calculation Error", "Other"],
-    HRIS_ERRORS: ["Fingerprint Error", "Attendance Error", "Leave Error", "Login Error", "General Bug"],
     NO_PAY_ISSUES: ["Salary Missing", "Wrong Salary", "Bonus Missing", "Allowance Missing", "Wrong Deduction"],
-    OTHER_ISSUES: ["Workplace Safety", "Harassment", "Transport", "Facilities", "Uniform", "General"],
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,10 +41,13 @@ function NewComplaintFormContent() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("hip_hr_token") : null;
       const categoryMap: Record<string, string> = {
-        OT_ISSUES: "OT Issues",
-        HRIS_ERRORS: "HRIS System Errors",
-        NO_PAY_ISSUES: "No Pay Issues",
+        SALARY_ISSUES: "Salary Related Issues",
+        HRIS_ERRORS: "HRIS System Issues",
+        FINGERPRINT_ISSUES: "Fingerprint Machine Issues",
+        EMPLOYEE_NEEDS: "Employee Requirements",
         OTHER_ISSUES: "Other Issues",
+        OT_ISSUES: "OT Issues",
+        NO_PAY_ISSUES: "No Pay Issues",
       };
 
       const res = await fetch("/api/complaints", {
@@ -149,9 +155,10 @@ function NewComplaintFormContent() {
           }}
           className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-[#0B3C68]"
         >
-          <option value="OT_ISSUES">{t.home.catOtTitle} ({t.home.catOtSub})</option>
+          <option value="SALARY_ISSUES">{t.home.catSalaryTitle || t.home.catNoPayTitle} ({t.home.catSalarySub || t.home.catNoPaySub})</option>
           <option value="HRIS_ERRORS">{t.home.catHrisTitle} ({t.home.catHrisSub})</option>
-          <option value="NO_PAY_ISSUES">{t.home.catNoPayTitle} ({t.home.catNoPaySub})</option>
+          <option value="FINGERPRINT_ISSUES">{t.home.catFingerprintTitle} ({t.home.catFingerprintSub})</option>
+          <option value="EMPLOYEE_NEEDS">{t.home.catEmployeeNeedsTitle} ({t.home.catEmployeeNeedsSub})</option>
           <option value="OTHER_ISSUES">{t.home.catOtherTitle} ({t.home.catOtherSub})</option>
         </select>
       </div>

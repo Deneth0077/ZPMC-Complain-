@@ -7,17 +7,17 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
-  t: typeof translations.en;
+  t: typeof translations.si;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>("si");
 
   useEffect(() => {
     const saved = localStorage.getItem("hip_hr_lang") as Language;
-    if (saved && (saved === "en" || saved === "si")) {
+    if (saved && (saved === "si" || saved === "en" || saved === "zh")) {
       setLanguageState(saved);
     }
   }, []);
@@ -28,11 +28,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleLanguage = () => {
-    const nextLang = language === "en" ? "si" : "en";
-    setLanguage(nextLang);
+    const cycle: Record<Language, Language> = {
+      si: "en",
+      en: "zh",
+      zh: "si",
+    };
+    setLanguage(cycle[language] || "si");
   };
 
-  const t = translations[language];
+  const t = translations[language] || translations.si;
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>

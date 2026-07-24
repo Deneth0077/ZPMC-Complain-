@@ -51,10 +51,12 @@ export async function GET(req: Request) {
     ]);
 
     const categoriesFormatted = {
-      otIssues: categoryStats.find((c) => c._id === "OT Issues" || c._id === "OT_ISSUES")?.count || 0,
-      hrisErrors: categoryStats.find((c) => c._id === "HRIS System Errors" || c._id === "HRIS_ERRORS")?.count || 0,
-      noPayIssues: categoryStats.find((c) => c._id === "No Pay Issues" || c._id === "NO_PAY_ISSUES")?.count || 0,
+      salaryIssues: categoryStats.find((c) => c._id === "Salary Related Issues" || c._id === "SALARY_ISSUES" || c._id === "No Pay Issues" || c._id === "NO_PAY_ISSUES")?.count || 0,
+      hrisErrors: categoryStats.find((c) => c._id === "HRIS System Errors" || c._id === "HRIS_ERRORS" || c._id === "HRIS System Issues")?.count || 0,
+      fingerprintIssues: categoryStats.find((c) => c._id === "Fingerprint Machine Issues" || c._id === "FINGERPRINT_ISSUES")?.count || 0,
+      employeeNeeds: categoryStats.find((c) => c._id === "Employee Requirements" || c._id === "EMPLOYEE_NEEDS")?.count || 0,
       otherIssues: categoryStats.find((c) => c._id === "Other Issues" || c._id === "OTHER_ISSUES")?.count || 0,
+      otIssues: categoryStats.find((c) => c._id === "OT Issues" || c._id === "OT_ISSUES")?.count || 0,
     };
 
     // HR Officers handling activity (Strictly for HR Manager view)

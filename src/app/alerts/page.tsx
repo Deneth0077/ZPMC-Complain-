@@ -58,10 +58,12 @@ export default function AlertsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-xs font-bold text-[#0B3C68] border border-slate-200"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-xs font-bold text-[#0B3C68] border border-slate-200"
           >
             <Globe className="w-3.5 h-3.5" />
-            <span>{language === "en" ? "සිං" : "EN"}</span>
+            <span>
+              {language === "si" ? "සිංහල" : language === "en" ? "English" : "中文"}
+            </span>
           </button>
 
           <Link href="/profile" className="touch-active">

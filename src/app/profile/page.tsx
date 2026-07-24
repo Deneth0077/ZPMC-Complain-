@@ -93,6 +93,16 @@ export default function ProfilePage() {
             
             <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
+                onClick={() => setLanguage("si")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  language === "si"
+                    ? "bg-[#0B3C68] text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                සිංහල
+              </button>
+              <button
                 onClick={() => setLanguage("en")}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
                   language === "en"
@@ -103,14 +113,14 @@ export default function ProfilePage() {
                 English
               </button>
               <button
-                onClick={() => setLanguage("si")}
+                onClick={() => setLanguage("zh")}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  language === "si"
+                  language === "zh"
                     ? "bg-[#0B3C68] text-white shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                සිංහල
+                中文
               </button>
             </div>
           </div>

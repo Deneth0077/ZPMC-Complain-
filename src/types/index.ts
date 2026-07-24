@@ -14,7 +14,7 @@ export interface Employee {
 }
 
 export type ComplaintStatus = 'PENDING' | 'UNDER REVIEW' | 'RESOLVED' | 'REJECTED';
-export type CategoryType = 'OT_ISSUES' | 'HRIS_ERRORS' | 'NO_PAY_ISSUES' | 'OTHER_ISSUES';
+export type CategoryType = 'SALARY_ISSUES' | 'HRIS_ERRORS' | 'FINGERPRINT_ISSUES' | 'EMPLOYEE_NEEDS' | 'OTHER_ISSUES' | 'OT_ISSUES' | 'NO_PAY_ISSUES';
 
 export interface NotificationItem {
   id: string;

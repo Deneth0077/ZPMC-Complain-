@@ -19,13 +19,15 @@ export default function WelcomePage() {
           {t.welcome.header}
         </h1>
 
-        {/* Dual Language Switcher Button */}
+        {/* 3-Language Switcher Button */}
         <button
           onClick={toggleLanguage}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-bold text-[#0B3C68] transition-colors touch-active border border-slate-200"
         >
           <Globe className="w-3.5 h-3.5 text-[#0B3C68]" />
-          <span>{language === "en" ? "සිංහල" : "English"}</span>
+          <span>
+            {language === "si" ? "සිංහල" : language === "en" ? "English" : "中文"}
+          </span>
         </button>
       </header>
 

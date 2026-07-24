@@ -9,6 +9,9 @@ import {
   Clock,
   Monitor,
   Banknote,
+  Fingerprint,
+  UserCheck,
+  HelpCircle,
   MoreHorizontal,
   PlusCircle,
   Headphones,
@@ -42,13 +45,15 @@ export default function HomePage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Dual Language Switcher Button */}
+          {/* 3-Language Switcher Button */}
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-bold text-[#0B3C68] transition-colors border border-slate-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-bold text-[#0B3C68] transition-colors border border-slate-200 touch-active"
           >
             <Globe className="w-3.5 h-3.5 text-[#0B3C68]" />
-            <span>{language === "en" ? "සිං" : "EN"}</span>
+            <span>
+              {language === "si" ? "සිංහල" : language === "en" ? "English" : "中文"}
+            </span>
           </button>
 
           {/* Notification Bell */}
@@ -126,77 +131,100 @@ export default function HomePage() {
             </button>
           </div>
 
-          {/* 2x2 Grid Cards matching screenshots */}
+          {/* 5 Grid Cards with Custom Icons */}
           <div className="grid grid-cols-2 gap-3">
-            {/* Card 1: OT Issues */}
+            {/* Card 1: 1. වැටුප් සම්බන්ධ ප්රශ්න */}
             <div
-              onClick={() => router.push("/complaints/ot-issues")}
+              onClick={() => router.push("/complaints/no-pay")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
-              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0060A8] flex items-center justify-center mb-2">
-                <Clock className="w-6 h-6 stroke-[1.8]" />
+              <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-2">
+                <Banknote className="w-6 h-6 stroke-[1.8]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                  {t.home.catOtTitle}
+                  {t.home.catSalaryTitle || t.home.catNoPayTitle}
                 </h3>
-                <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                  {t.home.catOtSub}
+                <p className="text-[11px] font-medium text-slate-400 mt-0.5 line-clamp-1">
+                  {t.home.catSalarySub || t.home.catNoPaySub}
                 </p>
               </div>
             </div>
 
-            {/* Card 2: HRIS System Errors */}
+            {/* Card 2: 2. HRIS System සම්බන්ධව ප්රශ්න */}
             <div
-              onClick={() => router.push("/complaints/describe?category=HRIS")}
+              onClick={() => router.push("/complaints/describe?category=HRIS_ERRORS")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
-              <div className="w-11 h-11 rounded-xl bg-sky-50 text-[#0060A8] flex items-center justify-center mb-2">
+              <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-2">
                 <Monitor className="w-6 h-6 stroke-[1.8]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 leading-tight">
                   {t.home.catHrisTitle}
                 </h3>
-                <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                <p className="text-[11px] font-medium text-slate-400 mt-0.5 line-clamp-1">
                   {t.home.catHrisSub}
                 </p>
               </div>
             </div>
 
-            {/* Card 3: No Pay Issues */}
+            {/* Card 3: 3. Fingerprint Mashine සම්බන්ධ ප්රශ්න */}
             <div
-              onClick={() => router.push("/complaints/no-pay")}
+              onClick={() => router.push("/complaints/describe?category=FINGERPRINT_ISSUES")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
-              <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-2">
-                <Banknote className="w-6 h-6 stroke-[1.8]" />
+              <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-2">
+                <Fingerprint className="w-6 h-6 stroke-[1.8]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                  {t.home.catNoPayTitle}
+                  {t.home.catFingerprintTitle}
                 </h3>
-                <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                  {t.home.catNoPaySub}
+                <p className="text-[11px] font-medium text-slate-400 mt-0.5 line-clamp-1">
+                  {t.home.catFingerprintSub}
                 </p>
               </div>
             </div>
 
-            {/* Card 4: Other Issues */}
+            {/* Card 4: 4. සේවක අවශ්යතා සම්බන්ධ ප්රශ්න */}
             <div
-              onClick={() => router.push("/complaints/describe")}
+              onClick={() => router.push("/complaints/describe?category=EMPLOYEE_NEEDS")}
               className="bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex flex-col justify-between h-36"
             >
-              <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center mb-2">
-                <MoreHorizontal className="w-6 h-6 stroke-[2]" />
+              <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2">
+                <UserCheck className="w-6 h-6 stroke-[1.8]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                  {t.home.catOtherTitle}
+                  {t.home.catEmployeeNeedsTitle}
                 </h3>
-                <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                  {t.home.catOtherSub}
+                <p className="text-[11px] font-medium text-slate-400 mt-0.5 line-clamp-1">
+                  {t.home.catEmployeeNeedsSub}
                 </p>
+              </div>
+            </div>
+
+            {/* Card 5: 5. වෙනත් ප්රශ්න (Full Width Card for symmetry) */}
+            <div
+              onClick={() => router.push("/complaints/describe?category=OTHER_ISSUES")}
+              className="col-span-2 bg-white rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-all cursor-pointer touch-active flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0">
+                  <HelpCircle className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                    {t.home.catOtherTitle}
+                  </h3>
+                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                    {t.home.catOtherSub}
+                  </p>
+                </div>
+              </div>
+              <div className="text-slate-300 pr-2">
+                <MoreHorizontal className="w-5 h-5" />
               </div>
             </div>
           </div>
