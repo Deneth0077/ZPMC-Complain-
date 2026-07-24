@@ -115,7 +115,7 @@ export default function WelcomePage() {
           </Link>
 
           <Link
-            href="/login?tab=register"
+            href="/register"
             className="w-full h-13 py-3.5 px-4 bg-white border border-[#0B3C68] text-[#0B3C68] font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm hover:bg-sky-50/50 transition-all touch-active"
           >
             <UserPlus className="w-5 h-5 stroke-[2.2]" />

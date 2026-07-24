@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  Anchor,
   User,
   Phone,
   Building2,
@@ -115,9 +115,16 @@ export default function RegisterPage() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-12 h-12 rounded-2xl bg-[#0B3C68] flex items-center justify-center text-white shadow-md shadow-blue-950/20 mb-2"
+          className="w-14 h-14 rounded-2xl overflow-hidden bg-[#0B3C68] shadow-md shadow-blue-950/20 mb-2"
         >
-          <Anchor className="w-6 h-6 text-white stroke-[2]" />
+          <Image
+            src="/zpmc-hr-icon.png"
+            alt="ZPMC LANKA HR App Icon"
+            width={56}
+            height={56}
+            priority
+            className="w-full h-full object-cover rounded-2xl"
+          />
         </motion.div>
         <h1 className="text-lg font-bold text-[#0B3C68] tracking-tight">
           Hambantota Port
